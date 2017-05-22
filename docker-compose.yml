@@ -1,0 +1,20 @@
+---
+
+rabbitmq:
+  image: "rabbitmq:3-management"
+  hostname: "srao-rabbit"
+  ports:
+    - "15672:15672"
+    - "5672:5672"
+  labels:
+    NAME: "spring-rabbitmq"
+
+consumer:
+  image: srao/consumer:latest
+  links:
+      - rabbitmq
+
+producer:
+  image: srao/producer:latest
+  links:
+      - rabbitmq
