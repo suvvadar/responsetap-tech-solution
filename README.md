@@ -1,5 +1,4 @@
-# spring-mq-example
-spring-mq-example
+
 
 #cd producer && mvn clean package
 
@@ -10,3 +9,7 @@ spring-mq-example
 #docker build -t srao/producer -f Dockerfile.producer .
 
 #docker-compose up -d
+# docker logs <<container_name>>
+# docker-compose stop
+#spring.rabbitmq.host=192.168.0.17
+#spring.rabbitmq.port=5672
