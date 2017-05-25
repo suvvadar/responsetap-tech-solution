@@ -14,16 +14,16 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
+import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicLong;
+
 @SpringBootApplication
 @EnableBinding(Sink.class)
 public class ConsumerApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(ConsumerApplication.class);
 
-	@Autowired
-	CounterEvents counterEvents;
-
-	private IAtomicLong numberOfEvents;
+	private AtomicLong numberOfEvents;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ConsumerApplication.class, args);
@@ -31,15 +31,11 @@ public class ConsumerApplication {
 
 	@StreamListener(Sink.INPUT)
 	public void phoneQueueListner(PhoneData phoneData) {
-		countingEvents();
+
 		validatePhoneNumber(phoneData.getPhoneNumber());
 
 		log.info("Received: " + phoneData);
 		log.info("Received Events: " + numberOfEvents.incrementAndGet());
-	}
-
-	private void countingEvents() {
-		log.debug("Total Number of received events ={}", counterEvents.counting());
 	}
 
 	private boolean validatePhoneNumber(String phoneNo) {
@@ -48,6 +44,8 @@ public class ConsumerApplication {
 		try {
 			PhoneNumber numberProto = phoneUtil.parse(phoneNo, "");
 			if(phoneUtil.isValidNumber(numberProto)){
+				String formatPhoneNo = phoneUtil.format(numberProto,PhoneNumberUtil.PhoneNumberFormat.E164);
+				int countryCode = numberProto.getCountryCode();
 				return  true;
 			}
 		}
